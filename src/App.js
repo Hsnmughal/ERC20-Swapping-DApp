@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Web3 from 'web3';
+import Token from './abis/Token.json';
+import EthSwap from './abis/EthSwap.json';
+import { Navbar } from './components';
 // import logo from '../logo.png';
 import './App.css';
 
 const App = () => {
 
-  const [account, setAccount] = useState('');
-  const [accountBal, setAccountBal] = useState('');
+  // STATES
+  let [account, setAccount] = useState('');
+  let [accountBal, setAccountBal] = useState('');
+  let [token, setToken] = useState({});
 
+
+  // FUNCTIONS
   useEffect(() => {
     loadWeb3();
     loadBlockChainData();
@@ -19,15 +26,34 @@ const App = () => {
     const web3 = window.web3;
 
     // FETCHING ACCOUNT
-    const account = await web3.eth.getAccounts();
-    setAccount(account[0])
-    console.log(account[0])
+    const accounts = await web3.eth.getAccounts();
+    setAccount(account = accounts[0])
 
     // FETCHING BALANCE
-    const accountBalance = await web3.eth.getBalance(account[0]);
-    setAccountBal(accountBalance);
-    console.log(accountBalance);
+    const EthSwapBal = await web3.eth.getBalance(account);
+    setAccountBal(EthSwapBal);
+    console.log(EthSwapBal);
 
+    // FETCHING CONTRACT DATA
+    const networkId = await web3.eth.net.getId();
+    const tokenData = Token.networks[networkId];
+
+    if (tokenData) {
+
+      const tokenCreation = new web3.eth.Contract(Token.abi, tokenData.address);
+      setToken(token = tokenCreation);
+      console.log("Token var",tokenCreation)
+      console.log("token state", token)
+      console.log("token address", tokenData.address)
+      
+      let tokenBal = await tokenCreation.methods.balanceOf(account).call();
+      console.log("TokenBal==> ", tokenBal.toString());
+      
+    } else {
+      
+      window.alert('Token contract not deployed to detected network.')
+
+    }
   }
 
   const loadWeb3 = async () => {
@@ -45,7 +71,7 @@ const App = () => {
 
   return (
     <div>
-      
+      <Navbar account={account}/>
       <div className="container-fluid mt-5">
         <div className="row">
           <main role="main" className="col-lg-12 d-flex text-center">
