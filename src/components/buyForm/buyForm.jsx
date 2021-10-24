@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import tokenLogo from '../../Assets/Images/tokenLogo.png';
 import Web3 from 'web3';
 import ethLogo from '../../Assets/Images/ethLogo.png';
@@ -7,7 +7,8 @@ const buyForm = (props) => {
 
   // STATES
   const [value, setValue] = useState('0');
-  const [ethAmount, setEthAmount]= useState('0')
+  const [ethAmount, setEthAmount] = useState('0');
+  const [tokenBalance, settokenBalance] = useState(props.tokenBalance);
 
   // FUNCTIONS
   const formFunction = (e) => {
@@ -15,6 +16,10 @@ const buyForm = (props) => {
     props.buyTokens(ethAmount);
   }
 
+  // useEffect(() => {
+  //   settokenBalance(props.tokenBalance)
+  //   console.log(props.tokenBalance)
+  // }, [tokenBalance])
   return (
     <>
       <form className="mb-3" onSubmit={
@@ -31,12 +36,17 @@ const buyForm = (props) => {
             type="text"
             onChange={
               (e) => {
-                setEthAmount(Web3.utils.toWei(e.target.value.toString(), 'Ether'))
-                setValue(e.target.value.toString() * 100);
+                if (e.target.value == '') {
+                  setValue('0' * 100);
+                }
+                else {
+                  setEthAmount(Web3.utils.toWei(e.target.value, 'Ether'))
+                  setValue(e.target.value * 100);
+                }
               }
             }
             className="form-control form-control-lg"
-            placeholder="0"
+            // placeholder="0"
             required />
           <div className="input-group-append">
             <div className="input-group-text">
@@ -48,7 +58,7 @@ const buyForm = (props) => {
         <div>
           <label className="float-left"><b>Output</b></label>
           <span className="float-right text-muted">
-            Balance: {Web3.utils.fromWei(props.tokenBalance, 'Ether')}
+            Balance: {Web3.utils.fromWei(tokenBalance , 'Ether')}
           </span>
         </div>
         <div className="input-group mb-2">
@@ -72,9 +82,6 @@ const buyForm = (props) => {
         </div>
         <button type="submit" className="btn btn-primary btn-block btn-lg">SWAP!</button>
       </form>
-      <div>
-        hello
-      </div>
     </>
   )
 }

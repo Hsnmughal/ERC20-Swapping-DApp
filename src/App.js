@@ -16,6 +16,8 @@ const App = () => {
   let [ethSwap, setEthSwap] = useState({});
   let [loading, setLoading] = useState(true);
 
+  // VARIABLES, CONSTANTS
+  let EthSwapData;
 
   // FUNCTIONS
   useEffect(() => {
@@ -58,7 +60,7 @@ const App = () => {
 
     // ETHSWAP
     // FETCHING CONTRACT DATA
-    const EthSwapData = EthSwap.networks[networkId];
+    EthSwapData = EthSwap.networks[networkId];
 
     if (EthSwapData) {
 
@@ -68,6 +70,7 @@ const App = () => {
 
       let tokenBal = await token.methods.balanceOf(account).call();
       setTokenBalance(tokenBalance = tokenBal)
+
 
     } else {
 
@@ -90,14 +93,25 @@ const App = () => {
     }
   }
 
-  const buyTokens = (ethAmount) => {
+  const buyTokens = async (ethAmount) => {
     setLoading(true)
     console.log(ethAmount)
-    ethSwap.methods.buyTokens().send({from : account, value : ethAmount}).on('transactionHash', (Hash) => {
+    await ethSwap.methods.buyTokens().send({ from: account, value: ethAmount }).on('transactionHash', (Hash) => {
       setLoading(false)
+      window.location.reload(true)
     })
   }
 
+  const sellTokens = async (tokenAmount) => {
+    setLoading(true)
+    console.log(tokenAmount)
+    await token.methods.approve(EthSwapData.address, tokenAmount).send({ from: account }).on('transactionHash', async (Hash) => {
+      await ethSwap.methods.sellTokens(tokenAmount).send({ from: account }).on('transactionHash', Hash => {
+        setLoading(false)
+        window.location.reload(true)
+      })
+    })
+  }
 
   return (
     <div>
@@ -105,7 +119,7 @@ const App = () => {
       <div className="container-fluid mt-5">
         <div className="row">
           <main role="main" className="col-lg-12 d-flex text-center">
-            <div className="content mr-auto ml-auto">
+            <div className="content mr-auto ml-auto col-lg-5">
               <a
                 href="http://www.dappuniversity.com/bootcamp"
                 target="_blank"
@@ -121,7 +135,7 @@ const App = () => {
                   ethBalance={ethBalance}
                   tokenBalance={tokenBalance}
                   buyTokens={buyTokens}
-                // sellTokens={this.sellTokens}
+                  sellTokens={sellTokens}
                 />
               }
             </div>

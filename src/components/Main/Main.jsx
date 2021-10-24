@@ -28,7 +28,7 @@ const Main = (props) => {
                 </button>
             </div>
 
-            <div className="card mb-4" >
+            <div className="card mb-4 " >
 
                 <div className="card-body">
 
