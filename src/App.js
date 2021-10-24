@@ -16,9 +16,6 @@ const App = () => {
   let [ethSwap, setEthSwap] = useState({});
   let [loading, setLoading] = useState(true);
 
-  // VARIABLES, CONSTANTS
-  let EthSwapData;
-
   // FUNCTIONS
   useEffect(() => {
     loadWeb3();
@@ -46,7 +43,7 @@ const App = () => {
     if (tokenData) {
 
       const tokenCreation = new web3.eth.Contract(Token.abi, tokenData.address);
-      setEthSwap(token = tokenCreation);
+      setToken(token = tokenCreation);
       console.log("token state", token)
 
       let tokenBal = await token.methods.balanceOf(account).call();
@@ -60,7 +57,7 @@ const App = () => {
 
     // ETHSWAP
     // FETCHING CONTRACT DATA
-    EthSwapData = EthSwap.networks[networkId];
+    const EthSwapData = EthSwap.networks[networkId];
 
     if (EthSwapData) {
 
@@ -105,7 +102,8 @@ const App = () => {
   const sellTokens = async (tokenAmount) => {
     setLoading(true)
     console.log(tokenAmount)
-    await token.methods.approve(EthSwapData.address, tokenAmount).send({ from: account }).on('transactionHash', async (Hash) => {
+    console.log(ethSwap._address)
+    await token.methods.approve(ethSwap._address, tokenAmount).send({ from: account }).on('transactionHash', async (Hash) => {
       await ethSwap.methods.sellTokens(tokenAmount).send({ from: account }).on('transactionHash', Hash => {
         setLoading(false)
         window.location.reload(true)

@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import BuyForm from '../buyForm/buyForm';
-// import SellForm from './SellForm'
+import SellForm from '../sellForm/sellForm';
 
 const Main = (props) => {
     // STATES
     const [toggler, setToggler] = useState(true);
 
     // DESTRUCTURING PORPS
-    const { ethBalance , tokenBalance , buyTokens } = props;
+    const { ethBalance, tokenBalance, buyTokens , sellTokens} = props;
     console.log(ethBalance + ' <> ' + tokenBalance);
     return (
         <div id="content" className="mt-3">
@@ -33,11 +33,17 @@ const Main = (props) => {
                 <div className="card-body">
 
                     {toggler
-                        &&
+                        ?
                         <BuyForm
                             ethBalance={ethBalance}
                             tokenBalance={tokenBalance}
                             buyTokens={buyTokens}
+                        />
+                        :
+                        <SellForm
+                            ethBalance={ethBalance}
+                            tokenBalance={tokenBalance}
+                            sellTokens={sellTokens}
                         />
                     }
 
@@ -52,12 +58,3 @@ const Main = (props) => {
 export default Main
 
 // , buyTokens , sellTokens
-
-
-
-// :
-// <SellForm
-//     ethBalance={this.props.ethBalance}
-//     tokenBalance={this.props.tokenBalance}
-//     sellTokens={this.props.sellTokens}
-// />
