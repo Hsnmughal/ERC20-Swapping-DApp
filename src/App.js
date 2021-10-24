@@ -3,7 +3,6 @@ import Web3 from 'web3';
 import Token from './abis/Token.json';
 import EthSwap from './abis/EthSwap.json';
 import { Navbar, Main } from './components';
-// import logo from '../logo.png';
 import './App.css';
 
 const App = () => {
@@ -124,7 +123,6 @@ const App = () => {
                 rel="noopener noreferrer"
               >
               </a>
-              {/* <h1>Dapp University Starter Kit</h1> */}
               {loading
                 ?
                 <p id="loader" className="text-center">Loading...</p>
