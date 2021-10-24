@@ -1,36 +1,45 @@
-import React from 'react'
-// import BuyForm from './BuyForm'
+import React, { useState } from 'react'
+import BuyForm from '../buyForm/buyForm';
 // import SellForm from './SellForm'
 
-const Main = () => {
+const Main = (props) => {
+    // STATES
+    const [toggler, setToggler] = useState(true);
+
+    // DESTRUCTURING PORPS
+    const { ethBalance , tokenBalance , buyTokens } = props;
+    console.log(ethBalance + ' <> ' + tokenBalance);
     return (
         <div id="content" className="mt-3">
 
-            {/* <div className="d-flex justify-content-between mb-3">
-          <button
-              className="btn btn-light"
-              onClick={(event) => {
-                this.setState({ currentForm: 'buy' })
-              }}
-            >
-            Buy
-          </button>
-          <span className="text-muted">&lt; &nbsp; &gt;</span>
-          <button
-              className="btn btn-light"
-              onClick={(event) => {
-                this.setState({ currentForm: 'sell' })
-              }}
-            >
-            Sell
-          </button>
-        </div> */}
+            <div className="d-flex justify-content-between mb-3">
+                <button
+                    className="btn btn-light"
+                    onClick={() => setToggler(true)}
+                >
+                    Buy
+                </button>
+                <span className="text-muted">&lt; &nbsp; &gt;</span>
+                <button
+                    className="btn btn-light"
+                    onClick={() => setToggler(false)}
+                >
+                    Sell
+                </button>
+            </div>
 
             <div className="card mb-4" >
 
                 <div className="card-body">
 
-                    {content}
+                    {toggler
+                        &&
+                        <BuyForm
+                            ethBalance={ethBalance}
+                            tokenBalance={tokenBalance}
+                            buyTokens={buyTokens}
+                        />
+                    }
 
                 </div>
 
@@ -42,71 +51,13 @@ const Main = () => {
 
 export default Main
 
+// , buyTokens , sellTokens
 
 
 
-
-
-class Main extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            currentForm: 'buy'
-        }
-    }
-
-    render() {
-        let content
-        if (this.state.currentForm === 'buy') {
-            content = <BuyForm
-                ethBalance={this.props.ethBalance}
-                tokenBalance={this.props.tokenBalance}
-                buyTokens={this.props.buyTokens}
-            />
-        } else {
-            content = <SellForm
-                ethBalance={this.props.ethBalance}
-                tokenBalance={this.props.tokenBalance}
-                sellTokens={this.props.sellTokens}
-            />
-        }
-
-        return (
-            <div id="content" className="mt-3">
-
-                <div className="d-flex justify-content-between mb-3">
-                    <button
-                        className="btn btn-light"
-                        onClick={(event) => {
-                            this.setState({ currentForm: 'buy' })
-                        }}
-                    >
-                        Buy
-                    </button>
-                    <span className="text-muted">&lt; &nbsp; &gt;</span>
-                    <button
-                        className="btn btn-light"
-                        onClick={(event) => {
-                            this.setState({ currentForm: 'sell' })
-                        }}
-                    >
-                        Sell
-                    </button>
-                </div>
-
-                <div className="card mb-4" >
-
-                    <div className="card-body">
-
-                        {content}
-
-                    </div>
-
-                </div>
-
-            </div>
-        );
-    }
-}
-
-export default Main;
+// :
+// <SellForm
+//     ethBalance={this.props.ethBalance}
+//     tokenBalance={this.props.tokenBalance}
+//     sellTokens={this.props.sellTokens}
+// />

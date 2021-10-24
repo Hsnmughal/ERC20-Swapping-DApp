@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Web3 from 'web3';
 import Token from './abis/Token.json';
 import EthSwap from './abis/EthSwap.json';
-import { Navbar } from './components';
+import { Navbar, Main } from './components';
 // import logo from '../logo.png';
 import './App.css';
 
@@ -10,8 +10,8 @@ const App = () => {
 
   // STATES
   let [account, setAccount] = useState('');
-  let [ethBalance, setEthBalance] = useState('');
-  let [tokenBalance, setTokenBalance] = useState('');
+  let [ethBalance, setEthBalance] = useState('0');
+  let [tokenBalance, setTokenBalance] = useState('0');
   let [token, setToken] = useState({});
   let [ethSwap, setEthSwap] = useState({});
   let [loading, setLoading] = useState(true);
@@ -66,8 +66,8 @@ const App = () => {
       setEthSwap(ethSwap = ethSwapCreation);
       console.log("token state", ethSwap)
 
-      // let tokenBal = await token.methods.balanceOf(account).call();
-      // console.log("TokenBal==> ", tokenBal.toString());
+      let tokenBal = await token.methods.balanceOf(account).call();
+      setTokenBalance(tokenBalance = tokenBal)
 
     } else {
 
@@ -89,16 +89,13 @@ const App = () => {
       window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
     }
   }
-  let content
-  if (loading) {
-    content = <p id="loader" className="text-center">Loading...</p>
-  } else {
-    content = <Main
-      ethBalance={ethBalance}
-      tokenBalance={tokenBalance}
-    // buyTokens={this.buyTokens}
-    // sellTokens={this.sellTokens}
-    />
+
+  const buyTokens = (ethAmount) => {
+    setLoading(true)
+    console.log(ethAmount)
+    ethSwap.methods.buyTokens().send({from : account, value : ethAmount}).on('transactionHash', (Hash) => {
+      setLoading(false)
+    })
   }
 
 
@@ -123,7 +120,7 @@ const App = () => {
                 <Main
                   ethBalance={ethBalance}
                   tokenBalance={tokenBalance}
-                // buyTokens={this.buyTokens}
+                  buyTokens={buyTokens}
                 // sellTokens={this.sellTokens}
                 />
               }
