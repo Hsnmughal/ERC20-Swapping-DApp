@@ -10,8 +10,11 @@ const App = () => {
 
   // STATES
   let [account, setAccount] = useState('');
-  let [accountBal, setAccountBal] = useState('');
+  let [ethBalance, setEthBalance] = useState('');
+  let [tokenBalance, setTokenBalance] = useState('');
   let [token, setToken] = useState({});
+  let [ethSwap, setEthSwap] = useState({});
+  let [loading, setLoading] = useState(true);
 
 
   // FUNCTIONS
@@ -25,14 +28,14 @@ const App = () => {
     // Getting WEB3
     const web3 = window.web3;
 
-    // FETCHING ACCOUNT
+    // FETCHING USER ACCOUNT
     const accounts = await web3.eth.getAccounts();
     setAccount(account = accounts[0])
 
-    // FETCHING BALANCE
-    const EthSwapBal = await web3.eth.getBalance(account);
-    setAccountBal(EthSwapBal);
-    console.log(EthSwapBal);
+    // TOKEN
+    // FETCHING USER ETH BALANCE
+    const ethBal = await web3.eth.getBalance(account);
+    setEthBalance(ethBal);
 
     // FETCHING CONTRACT DATA
     const networkId = await web3.eth.net.getId();
@@ -41,19 +44,37 @@ const App = () => {
     if (tokenData) {
 
       const tokenCreation = new web3.eth.Contract(Token.abi, tokenData.address);
-      setToken(token = tokenCreation);
-      console.log("Token var",tokenCreation)
+      setEthSwap(token = tokenCreation);
       console.log("token state", token)
-      console.log("token address", tokenData.address)
-      
-      let tokenBal = await tokenCreation.methods.balanceOf(account).call();
+
+      let tokenBal = await token.methods.balanceOf(account).call();
       console.log("TokenBal==> ", tokenBal.toString());
-      
+
     } else {
-      
+
       window.alert('Token contract not deployed to detected network.')
 
     }
+
+    // ETHSWAP
+    // FETCHING CONTRACT DATA
+    const EthSwapData = EthSwap.networks[networkId];
+
+    if (EthSwapData) {
+
+      const ethSwapCreation = new web3.eth.Contract(EthSwap.abi, EthSwapData.address);
+      setEthSwap(ethSwap = ethSwapCreation);
+      console.log("token state", ethSwap)
+
+      // let tokenBal = await token.methods.balanceOf(account).call();
+      // console.log("TokenBal==> ", tokenBal.toString());
+
+    } else {
+
+      window.alert('Token contract not deployed to detected network.')
+
+    }
+    setLoading(false)
   }
 
   const loadWeb3 = async () => {
@@ -68,10 +89,22 @@ const App = () => {
       window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
     }
   }
+  let content
+  if (loading) {
+    content = <p id="loader" className="text-center">Loading...</p>
+  } else {
+    content = <Main
+      ethBalance={ethBalance}
+      tokenBalance={tokenBalance}
+    // buyTokens={this.buyTokens}
+    // sellTokens={this.sellTokens}
+    />
+  }
+
 
   return (
     <div>
-      <Navbar account={account}/>
+      <Navbar account={account} />
       <div className="container-fluid mt-5">
         <div className="row">
           <main role="main" className="col-lg-12 d-flex text-center">
@@ -81,9 +114,19 @@ const App = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {/* <img src={logo} className="App-logo" alt="logo" /> */}
               </a>
-              <h1>Dapp University Starter Kit</h1>
+              {/* <h1>Dapp University Starter Kit</h1> */}
+              {loading
+                ?
+                <p id="loader" className="text-center">Loading...</p>
+                :
+                <Main
+                  ethBalance={ethBalance}
+                  tokenBalance={tokenBalance}
+                // buyTokens={this.buyTokens}
+                // sellTokens={this.sellTokens}
+                />
+              }
             </div>
           </main>
         </div>
